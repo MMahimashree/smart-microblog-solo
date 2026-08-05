@@ -1,0 +1,104 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: var(--sp-4) var(--sp-2);
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--sp-2) var(--sp-3);
+  margin-bottom: var(--sp-4);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-lg);
+}
+
+.sidebar__brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--brand-gradient);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar__brand-text {
+  display: none;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (min-width: 1180px) {
+  .sidebar__brand-text { display: inline; }
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: var(--r-round);
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  font-size: var(--fs-md);
+  font-weight: 500;
+  width: 100%;
+  justify-content: flex-start;
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.sidebar__icon {
+  display: flex;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.sidebar__item:hover {
+  background: var(--surface-alt);
+  transform: translateX(2px);
+}
+
+.sidebar__item:hover .sidebar__icon { transform: scale(1.1); }
+
+.sidebar__item--active {
+  font-weight: 700;
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.sidebar__item--active .sidebar__icon { transform: scale(1.06); }
+
+.sidebar__label { display: none; }
+
+@media (min-width: 1180px) {
+  .sidebar__label { display: inline; }
+}
+
+.sidebar__theme-toggle {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r-round);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}

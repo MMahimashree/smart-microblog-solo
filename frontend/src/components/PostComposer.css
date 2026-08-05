@@ -1,0 +1,108 @@
+.composer {
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.composer__row { display: flex; gap: var(--sp-3); }
+
+.composer__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: var(--brand-soft);
+}
+
+.composer__main { flex: 1; min-width: 0; }
+
+.composer textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--fs-lg);
+  resize: none;
+  min-height: 64px;
+  line-height: 1.4;
+}
+
+.composer textarea:focus { outline: none; }
+
+.composer__meter-wrap { margin: var(--sp-3) 0; }
+
+.composer__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+}
+
+.composer__icons { display: flex; gap: 4px; }
+
+.composer__icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.composer__icon-btn:hover { background: var(--brand-soft); }
+.composer__icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.composer__right { display: flex; align-items: center; gap: var(--sp-3); }
+
+.composer__counter {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-tertiary);
+}
+
+.composer__counter--warn { color: var(--risk-medium); }
+.composer__counter--over { color: var(--risk-high); }
+
+.composer__post-btn {
+  padding: 9px 22px;
+  border-radius: 999px;
+  border: none;
+  background: var(--brand);
+  color: white;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  transition: filter var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.composer__post-btn:hover:not(:disabled) { filter: brightness(1.08); }
+.composer__post-btn:active:not(:disabled) { transform: scale(0.97); }
+.composer__post-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.composer__emoji-pop {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-elevated);
+  position: absolute;
+  z-index: 20;
+  margin-top: 4px;
+}
+
+.composer__emoji-pop button {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.composer__emoji-pop button:hover { background: var(--surface-alt); }

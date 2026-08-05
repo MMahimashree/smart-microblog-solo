@@ -1,0 +1,62 @@
+.post-card { padding: var(--sp-4); margin: 0 var(--sp-3) var(--sp-3) var(--sp-3); }
+.post-card:first-of-type { margin-top: var(--sp-3); }
+.post-card__row { display: flex; gap: var(--sp-3); }
+
+.post-card__avatar-ring {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  padding: 2px;
+  background: var(--brand-gradient);
+}
+
+.post-card__avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+  background: var(--surface);
+  border: 2px solid var(--surface);
+}
+
+.post-card__main { flex: 1; min-width: 0; }
+.post-card__meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: var(--fs-sm); }
+.post-card__name { font-weight: 700; color: var(--text-primary); }
+.post-card__handle, .post-card__time, .post-card__dot { color: var(--text-tertiary); }
+.post-card__badge { margin-left: auto; }
+
+.post-card__content {
+  margin: 8px 0 12px 0;
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-primary);
+}
+
+.post-card__actions { display: flex; align-items: center; gap: 4px; color: var(--text-tertiary); margin-top: 2px; }
+
+.post-card__action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  padding: 7px 10px;
+  border-radius: var(--r-round);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.post-card__action:hover { background: var(--brand-soft); color: var(--brand); transform: translateY(-1px); }
+.post-card__action:active { transform: scale(0.94); }
+.post-card__action--liked { color: #f43f8d; }
+.post-card__action--saved { color: var(--brand); }
+.post-card__action--danger { margin-left: auto; }
+.post-card__action--danger:hover { background: var(--risk-high-soft); color: var(--risk-high); }
+.post-card__action--confirm { background: var(--risk-high-soft); color: var(--risk-high); font-weight: 700; }

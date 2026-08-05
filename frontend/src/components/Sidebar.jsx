@@ -1,38 +1,63 @@
-import React from 'react';
+import { NavLink } from 'react-router-dom';
+import {
+  FiHome,
+  FiCompass,
+  FiBell,
+  FiMail,
+  FiBookmark,
+  FiUser,
+  FiSettings,
+  FiSun,
+  FiMoon,
+  FiShield,
+} from 'react-icons/fi';
+import { useTheme } from '../context/ThemeContext';
+import './Sidebar.css';
 
-function Sidebar() {
+const NAV_ITEMS = [
+  { to: '/', label: 'Home', icon: FiHome, end: true },
+  { to: '/explore', label: 'Explore', icon: FiCompass },
+  { to: '/notifications', label: 'Notifications', icon: FiBell },
+  { to: '/messages', label: 'Messages', icon: FiMail },
+  { to: '/bookmarks', label: 'Bookmarks', icon: FiBookmark },
+  { to: '/profile', label: 'Profile', icon: FiUser },
+  { to: '/settings', label: 'Settings', icon: FiSettings },
+];
+
+export default function Sidebar() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <div className="sidebar">
-
-      {/* LOGO */}
-      <div style={{
-        width: '44px',
-        height: '44px',
-        borderRadius: '12px',
-        background: '#534AB7',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: '4px'
-      }}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" fill="white"/>
-          <path d="M10 12L8 10L7 11L10 14L17 7L16 6L10 12Z" fill="#534AB7"/>
-        </svg>
+    <aside className="sidebar">
+      <div className="sidebar__brand">
+        <span className="sidebar__brand-mark">
+          <FiShield size={18} />
+        </span>
+        <span className="sidebar__brand-text">Privacy Guard</span>
       </div>
 
-      {/* NAV ITEMS */}
-      <div className="nav-item active" title="Home">🏠</div>
-      <div className="nav-item" title="Search">🔍</div>
-      <div className="nav-item" title="Notifications">🔔</div>
-      <div className="nav-item" title="Messages">✉️</div>
-      <div className="nav-item" title="Profile">👤</div>
+      <nav className="sidebar__nav">
+        {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            className={({ isActive }) =>
+              `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`
+            }
+          >
+            <span className="sidebar__icon">
+              <Icon size={22} />
+            </span>
+            <span className="sidebar__label">{label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
-      {/* POST BUTTON */}
-      <div className="sidebar-post-btn">✏️</div>
-
-    </div>
+      <button className="sidebar__theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? <FiMoon size={18} /> : <FiSun size={18} />}
+        <span className="sidebar__label">{theme === 'light' ? 'Dark mode' : 'Light mode'}</span>
+      </button>
+    </aside>
   );
 }
-
-export default Sidebar;

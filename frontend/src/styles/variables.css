@@ -1,0 +1,81 @@
+:root {
+  --brand: #8b5cf6;
+  --brand-2: #6366f1;
+  --brand-dim: #c4b5fd;
+  --brand-soft: rgba(139, 92, 246, 0.14);
+  --brand-gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+
+  --risk-low: #17bf63;
+  --risk-low-soft: rgba(23, 191, 99, 0.14);
+  --risk-medium: #ffad1f;
+  --risk-medium-soft: rgba(255, 173, 31, 0.16);
+  --risk-high: #f4212e;
+  --risk-high-soft: rgba(244, 33, 46, 0.14);
+
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: 0.9375rem;
+  --fs-md: 1.0625rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 26px;
+  --r-round: 999px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-med: 320ms;
+
+  --glass-blur: 16px;
+}
+
+:root,
+[data-theme='light'] {
+  --bg: #f4f2fb;
+  --bg-gradient: radial-gradient(circle at 10% -10%, rgba(139, 92, 246, 0.10), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.08), transparent 40%);
+  --surface: #ffffff;
+  --surface-alt: #f3f0fb;
+  --glass-bg: rgba(255, 255, 255, 0.66);
+  --glass-border: rgba(139, 92, 246, 0.16);
+  --border: #e6e1f5;
+  --text-primary: #16121f;
+  --text-secondary: #5c5570;
+  --text-tertiary: #928da3;
+  --shadow-card: 0 1px 2px rgba(45, 20, 90, 0.05);
+  --shadow-elevated: 0 20px 44px rgba(45, 20, 90, 0.16);
+  --overlay: rgba(22, 18, 31, 0.5);
+}
+
+[data-theme='dark'] {
+  --bg: #0d0a17;
+  --bg-gradient: radial-gradient(circle at 10% -10%, rgba(139, 92, 246, 0.20), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.14), transparent 40%);
+  --surface: #16121f;
+  --surface-alt: #1d1830;
+  --glass-bg: rgba(24, 19, 38, 0.6);
+  --glass-border: rgba(139, 92, 246, 0.22);
+  --border: #2a2440;
+  --text-primary: #f1edfa;
+  --text-secondary: #a89fc2;
+  --text-tertiary: #6d6488;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 24px 56px rgba(0, 0, 0, 0.6);
+  --overlay: rgba(4, 2, 10, 0.7);
+}
