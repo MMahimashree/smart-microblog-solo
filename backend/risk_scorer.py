@@ -1,104 +1,107 @@
 # ============================================
 # risk_scorer.py
-# PURPOSE: Calculate risk score from detected PII
-# and classify it as LOW, MEDIUM or HIGH
-# 
-# SCORING LOGIC:
-# Each PII type has a weight/points value
-# We add up all points and classify:
-# 0-29  → LOW
-# 30-69 → MEDIUM
-# 70+   → HIGH
+# PURPOSE:
+# Calculates a privacy risk score based on the
+# detected Personal Identifiable Information (PII)
+# and classifies it as LOW, MEDIUM or HIGH.
 # ============================================
 
+# ---------------- RISK WEIGHTS ---------------- #
 
-# ── RISK WEIGHTS ─────────────────────────────────────────────
-# Each PII type has a score value based on how dangerous it is
-# Phone and Email are most dangerous (strangers can directly contact you)
-# Location is medium danger (reveals where you are)
-# Person name alone is least dangerous
 RISK_WEIGHTS = {
-    'phone': 50,     # most dangerous — direct contact possible
-    'email': 50,     # most dangerous — direct contact possible
-    'location': 20,  # medium danger — reveals where you live/are
-    'person': 10     # least dangerous — name alone is not enough
+    "phone": 50,
+    "email": 50,
+    "aadhaar": 100,
+    "pan": 80,
+    "dob": 30,
+    "location": 20,
+    "person": 10
 }
 
-# ── RISK THRESHOLDS ──────────────────────────────────────────
-# These values decide which category the final score falls into
-LOW_MAX = 29      # 0 to 29 = LOW risk
-MEDIUM_MAX = 69   # 30 to 69 = MEDIUM risk
-                  # 70+ = HIGH risk
+# ---------------- THRESHOLDS ---------------- #
 
+LOW_MAX = 29
+MEDIUM_MAX = 69
+# HIGH = 70+
 
-# ── MAIN FUNCTION ────────────────────────────────────────────
-# Takes the detected PII dictionary from pii_detector.py
-# Returns risk score, risk level and a recommendation message
+# ---------------- MAIN FUNCTION ---------------- #
+
 def calculate_risk(detected_entities):
 
-    # Start with zero score
-    # We will add points for each PII found
     score = 0
 
-    # ── STEP 1: ADD POINTS FOR EACH PII FOUND ────────────────
+    # Phone Numbers
+    score += len(detected_entities["phones"]) * RISK_WEIGHTS["phone"]
 
-    # For each phone number found, add 50 points
-    # len() counts how many phone numbers were detected
-    score += len(detected_entities['phones']) * RISK_WEIGHTS['phone']
+    # Emails
+    score += len(detected_entities["emails"]) * RISK_WEIGHTS["email"]
 
-    # For each email found, add 50 points
-    score += len(detected_entities['emails']) * RISK_WEIGHTS['email']
+    # Aadhaar Numbers
+    score += len(detected_entities["aadhaars"]) * RISK_WEIGHTS["aadhaar"]
 
-    # For each location found, add 20 points
-    score += len(detected_entities['locations']) * RISK_WEIGHTS['location']
+    # PAN Numbers
+    score += len(detected_entities["pans"]) * RISK_WEIGHTS["pan"]
 
-    # For each person name found, add 10 points
-    score += len(detected_entities['persons']) * RISK_WEIGHTS['person']
+    # Date of Birth
+    score += len(detected_entities["dobs"]) * RISK_WEIGHTS["dob"]
 
-    # ── STEP 2: CAP THE SCORE AT 100 ─────────────────────────
-    # Score should never exceed 100 (like a percentage)
-    # If someone shares phone + email + location, score would be 120
-    # We cap it at 100 to keep it clean
-    if score > 100:
-        score = 100
+    # Locations
+    score += len(detected_entities["locations"]) * RISK_WEIGHTS["location"]
 
-    # ── STEP 3: CLASSIFY RISK LEVEL ──────────────────────────
-    # Based on the final score, assign a risk level
+    # Person Names
+    score += len(detected_entities["persons"]) * RISK_WEIGHTS["person"]
+
+    # Maximum score is 100
+    score = min(score, 100)
+
+    # -------- Risk Classification -------- #
+
     if score <= LOW_MAX:
-        # 0-29 = LOW — safe to post, no critical PII found
-        risk_level = 'LOW'
-        recommendation = 'Your post looks safe to publish.'
+
+        risk_level = "LOW"
+
+        recommendation = (
+            "No major privacy risks detected. "
+            "Your post appears safe to publish."
+        )
 
     elif score <= MEDIUM_MAX:
-        # 30-69 = MEDIUM — some PII found, user should be careful
-        risk_level = 'MEDIUM'
-        recommendation = 'Some personal information detected. Consider reviewing before posting.'
+
+        risk_level = "MEDIUM"
+
+        recommendation = (
+            "Some personal information was detected. "
+            "Please review your post before publishing."
+        )
 
     else:
-        # 70+ = HIGH — critical PII found, must warn user
-        risk_level = 'HIGH'
-        recommendation = 'Sensitive personal information detected! Remove it before publishing.'
 
-    # ── STEP 4: RETURN RESULT ─────────────────────────────────
-    # Return a dictionary with score, level and recommendation
-    # This will be sent back to the frontend as JSON
+        risk_level = "HIGH"
+
+        recommendation = (
+            "Highly sensitive personal information detected. "
+            "Remove or mask the information before publishing."
+        )
+
     return {
-        'risk_score': score,        # the numeric score (0-100)
-        'risk_level': risk_level,   # LOW / MEDIUM / HIGH
-        'recommendation': recommendation  # message to show user
+        "risk_score": score,
+        "risk_level": risk_level,
+        "recommendation": recommendation
     }
 
 
-# ── QUICK TEST ───────────────────────────────────────────────
-# Only runs when you directly run this file
-if __name__ == '__main__':
-    # Simulate what pii_detector would return
-    test_entities = {
-        'phones': ['9876543210'],
-        'emails': ['mahima@gmail.com'],
-        'persons': ['Mahima'],
-        'locations': ['Bangalore']
+# ---------------- TEST ---------------- #
+
+if __name__ == "__main__":
+
+    sample = {
+        "phones": ["9876543210"],
+        "emails": ["mahima@gmail.com"],
+        "aadhaars": ["1234 5678 9012"],
+        "pans": ["ABCDE1234F"],
+        "dobs": ["23/12/2005"],
+        "persons": ["Mahimashree"],
+        "locations": ["Mangalore"]
     }
-    print("Testing Risk Scorer...")
-    print("Input:", test_entities)
-    print("Output:", calculate_risk(test_entities))
+
+    print(calculate_risk(sample))

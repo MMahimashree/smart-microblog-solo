@@ -1,108 +1,191 @@
-# ============================================
-# pii_detector.py
-# PURPOSE: Detect Personal Identifiable Information (PII)
-# from user's post text using two methods:
-# 1. Regex → finds structured patterns (phone, email)
-# 2. spaCy → finds unstructured data (names, locations)
-# ============================================
+import re
+import spacy
 
-import re  # Built-in Python library for pattern matching using regular expressions
-import spacy  # NLP library — used to detect names, locations from text
+nlp = spacy.load("en_core_web_sm")
 
-# Load spaCy's small English model
-# This model is pre-trained on English text and can identify
-# real world entities like person names, cities, organisations
-nlp = spacy.load('en_core_web_sm')
+# ---------------- REGEX PATTERNS ---------------- #
 
-# Phone pattern explanation:
-# \b = word boundary (makes sure we don't match part of a longer number)
-# [6-9] = first digit must be 6,7,8 or 9 (all Indian numbers start this way)
-# \d{9} = followed by exactly 9 more digits
-# Total = 10 digit Indian mobile number
-PHONE_PATTERN = re.compile(r'\b[6-9]\d{9}\b')
+PHONE_PATTERN = re.compile(
+    r'\b(?:\+91[- ]?)?[6-9]\d{9}\b'
+)
 
-# Email pattern explanation:
-# [A-Za-z0-9._%+-]+ = one or more letters, numbers, dots, underscores
-# @ = the @ symbol
-# [A-Za-z0-9.-]+ = domain name like gmail, yahoo
-# \. = a dot
-# [A-Za-z]{2,} = extension like com, in, org (minimum 2 letters)
-EMAIL_PATTERN = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b')
+EMAIL_PATTERN = re.compile(
+    r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b'
+)
 
-# Manual list of common Indian cities
-# Because en_core_web_sm is a small model, it sometimes
-# misclassifies Indian city names as PERSON
-# So we maintain a manual list as backup
-INDIAN_CITIES = [
-    'bangalore', 'bengaluru', 'mumbai', 'delhi', 'chennai',
-    'hyderabad', 'pune', 'kolkata', 'ahmedabad', 'jaipur',
-    'mysore', 'mangalore', 'hubli', 'dharwad', 'udupi',
-    'kochi', 'coimbatore', 'surat', 'lucknow', 'nagpur'
+AADHAAR_PATTERN = re.compile(
+    r'\b\d{4}\s?\d{4}\s?\d{4}\b'
+)
+
+PAN_PATTERN = re.compile(
+    r'\b[A-Z]{5}[0-9]{4}[A-Z]\b',
+    re.IGNORECASE
+)
+
+DOB_PATTERN = re.compile(
+    r'\b(?:0?[1-9]|[12][0-9]|3[01])[\/.-](?:0?[1-9]|1[0-2])[\/.-](?:19|20)\d{2}\b'
+)
+
+# ---------------- INDIAN LOCATIONS ---------------- #
+
+INDIAN_LOCATIONS = [
+
+    # Karnataka
+    "bangalore","bengaluru","mangalore","mysore","udupi","hubli",
+    "dharwad","belgaum","shimoga","bellary","tumkur","hassan",
+
+    # Tamil Nadu
+    "chennai","madurai","coimbatore","salem","erode",
+    "tirunelveli","vellore","trichy","thoothukudi",
+
+    # Kerala
+    "kochi","kozhikode","thrissur","kollam","kannur","palakkad",
+
+    # Andhra Pradesh
+    "visakhapatnam","vijayawada","tirupati","guntur",
+
+    # Telangana
+    "hyderabad","warangal","karimnagar","nizamabad",
+
+    # Maharashtra
+    "mumbai","pune","nagpur","nashik",
+
+    # Delhi NCR
+    "delhi","new delhi","noida","gurgaon","faridabad",
+
+    # Gujarat
+    "ahmedabad","surat","rajkot","vadodara",
+
+    # Rajasthan
+    "jaipur","jodhpur","udaipur",
+
+    # Uttar Pradesh
+    "lucknow","kanpur","agra","varanasi",
+
+    # Goa
+    "goa","panaji",
+
+    # Others
+    "kolkata","patna","bhubaneswar","ranchi","indore","bhopal"
+]
+KNOWN_NAMES = [
+    "mahima",
+    "mahimashree",
+    "kavana",
+    "kamakshi",
+    "manyashree",
+    "manya",
+    "nivedha",
+    "saritha",
+    "sneha",
+    "priyanka",
+    "nandita",
+    "ananya",
+    "aravind",  
+    "madhumitha",
+    "siddharth",
+    "kavya",
+    "rahul",
+    "rohit",
+    "priya",
+    "anjali",
+    "akash",
+    "arjun",
+    "kiran",
+    "deepak",
+    "pooja",
+    "sneha",
+    "vikram",
+    "ajay",
+    "vijay",
+    "suresh",
+    "ramesh",
+    "apoorva",
+    "koushik"
 ]
 
-
-# ── MAIN FUNCTION ────────────────────────────────────────────
-# This function takes the user's post text as input
-# and returns a dictionary of all PII found
 def detect_pii(text):
 
-    # Initialize empty lists for each type of PII
-    # We will fill these as we find matches
     result = {
-        'emails': [],     # will store detected email addresses
-        'phones': [],     # will store detected phone numbers
-        'persons': [],    # will store detected person names (via spaCy)
-        'locations': []   # will store detected locations (via spaCy)
+        "phones": [],
+        "emails": [],
+        "aadhaars": [],
+        "pans": [],
+        "dobs": [],
+        "persons": [],
+        "locations": []
     }
 
-    # ── STEP 1: REGEX DETECTION ──────────────────────────────
-    # findall() searches the entire text and returns ALL matches as a list
+    # ---------- REGEX ----------
 
-    # Find all phone numbers in the text
-    phones = PHONE_PATTERN.findall(text)
-    result['phones'] = phones  # store found phones in result
+    result["phones"] = list(set(PHONE_PATTERN.findall(text)))
+    result["emails"] = list(set(EMAIL_PATTERN.findall(text)))
+    result["aadhaars"] = list(set(AADHAAR_PATTERN.findall(text)))
+    result["pans"] = list(set(PAN_PATTERN.findall(text)))
 
-    # Find all email addresses in the text
-    emails = EMAIL_PATTERN.findall(text)
-    result['emails'] = emails  # store found emails in result
+    result["dobs"] = [
+        m.group(0)
+        for m in DOB_PATTERN.finditer(text)
+    ]
 
-    # ── STEP 2: spaCy NER DETECTION ──────────────────────────
-    # NER = Named Entity Recognition
-    # spaCy reads the text and identifies real world entities
-    # doc = processed version of the text with all entities tagged
+    # ---------- SPACY ----------
+
     doc = nlp(text)
 
-    # Loop through all entities spaCy found
+    print("\n========== SPACY ==========")
+
     for ent in doc.ents:
-        # ent.text = the actual word found (e.g. "Mahima", "Bangalore")
-        # ent.label_ = the category spaCy assigned (PERSON, GPE, LOC etc.)
+        print(ent.text, "---->", ent.label_)
 
-        # Check if spaCy tagged it as PERSON
-        # but it is actually an Indian city name
-        if ent.label_ == 'PERSON' and ent.text.lower() in INDIAN_CITIES:
-            # Move it to locations instead of persons
-            result['locations'].append(ent.text)
+    print("===========================\n")
 
-        elif ent.label_ == 'PERSON':
-            # PERSON = a real person's name
-            result['persons'].append(ent.text)
+    for ent in doc.ents:
 
-        elif ent.label_ in ['GPE', 'LOC']:
-            # GPE = Geopolitical Entity (countries, cities, states)
-            # LOC = Location (mountains, rivers, areas)
-            result['locations'].append(ent.text)
+        value = ent.text.strip()
 
-    # ── IMPORTANT ────────────────────────────────────────────
-    # return the final result dictionary back to whoever called this function
-    # Without this line the function returns None (which was your bug!)
+        if ent.label_ == "PERSON":
+
+            if value.lower() in INDIAN_LOCATIONS:
+                result["locations"].append(value.title())
+            else:
+                result["persons"].append(value)
+
+        elif ent.label_ in ["GPE", "LOC"]:
+
+            result["locations"].append(value.title())
+
+    # ---------- Manual Indian Location Detection ----------
+
+    lower = text.lower()
+
+    for city in INDIAN_LOCATIONS:
+        if city in lower:
+            result["locations"].append(city.title())
+
+    # Manual person detection
+
+    for name in KNOWN_NAMES:
+        if name in lower:
+             result["persons"].append(name.title())
+
+    # ---------- Remove Duplicates ----------
+
+    result["persons"] = list(set(result["persons"]))
+    result["locations"] = list(set(result["locations"]))
+
     return result
 
 
-# ── QUICK TEST ───────────────────────────────────────────────
-# This block only runs when you directly run this file
-# It will NOT run when imported from main.py
-if __name__ == '__main__':
-    test_text = "Hi I am Mahima, call me at 9876543210 or email mahima@gmail.com, I live in Bangalore"
-    print("Testing PII Detector...")
-    print("Input:", test_text)
-    print("Output:", detect_pii(test_text))
+if __name__ == "__main__":
+
+    sample = """
+    My name is Mahimashree.
+    DOB: 23/12/2005
+    Phone: 9876543210
+    Email: mahima@gmail.com
+    Aadhaar: 1234 5678 9012
+    PAN: ABCDE1234F
+    I live in Mangalore.
+    """
+
+    print(detect_pii(sample))
