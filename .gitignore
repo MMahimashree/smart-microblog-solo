@@ -1,7 +1,47 @@
-venv/
+# Python
 __pycache__/
 *.pyc
-*.db
+venv/
+.venv/
+
+# Environment / secrets
 .env
+*.env
+
+# Node
 node_modules/
-build/
+frontend/dist/
+
+# ML models / large files
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+*.ckpt
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+# Large ML datasets
+ml/data/
+
+# Training checkpoints
+ml/models/*/checkpoints/
+
+# Python cache inside ML folders
+ml/**/__pycache__/
+
+# Temporary / generated files
+*.tmp
+*.cache*_backup.py
+*.joblib

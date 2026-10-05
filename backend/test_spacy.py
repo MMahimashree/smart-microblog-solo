@@ -6,5 +6,10 @@ text = input("Enter text: ")
 
 doc = nlp(text)
 
-for ent in doc.ents:
-    print(ent.text, "->", ent.label_) 
+print("\nDetected Entities:")
+
+if doc.ents:
+    for ent in doc.ents:
+        print(f"{ent.text} --> {ent.label_}")
+else:
+    print("No entities detected.")
